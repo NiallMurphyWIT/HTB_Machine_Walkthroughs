@@ -130,3 +130,17 @@ Alternatively, I have used the site crackstation.net, which will check and see i
 
 ![crackStation](Images/crackStation.png)
 
+Now we have the password for the rosa user account. We know from the nmap scan that SSH port 22 is open on the box.
+We can try and access the box via SSH with the rosa account.
+```
+ssh rosa@<target IP>
+
+cat user.txt
+```
+The login was successful. We can now read the user.txt file and obtain the user flag.
+
+![rosaSSH](Images/rosaSSH.png)
+
+
+## Root Flag
+
