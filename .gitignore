@@ -1,6 +1,3 @@
-# Ignore all .log files
-*.log
-
 # Ignore the directory named 'code'
-code/
-titanic/
+Code/
+Titanic/
