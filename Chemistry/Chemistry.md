@@ -29,11 +29,11 @@ We can try connecting directly to the web page.
 ```
 http://<target IP>:5000
 ```
-We can access the site. This shows a CIF Analyzer with a Login/Register options.
+We can access the site. This shows a CIF Analyzer with Login/Register options.
 
 ![webPage](Images/webPage.png)
 
-Next we can register and login to the site. This brings us to a CIF file upload page.
+Next, register and login to the site. This brings up a CIF file upload page.
 
 ![WebDash](Images/WebDash.png)
 
@@ -45,7 +45,7 @@ Download the example CIF file available on the dashboard.
 ## CIF Vulnerability
 Next, we can check if there are any vulnerabilities associated with CIF files that we can use to gain access to the box.
 
-Searching online and we find CVE-2024-2334 which can be used for 'Arbitrary Code Execution in Pymatgen via Insecure Deserialization'.
+Searching online will find CVE-2024-2334 which can be used for 'Arbitrary Code Execution in Pymatgen via Insecure Deserialization'.
 ```
 Reference: 
 https://ethicalhacking.uk/cve-2024-23346-arbitrary-code-execution-in-pymatgen-via-insecure/#gsc.tab=0
@@ -95,14 +95,14 @@ SHELL
 LISTENER
 nc -lvnp 444
 ```
-From here we can see the user flag on the user Rosa account. Unofrtunately, we do not have access to view/read the file.
+We can see the user flag on the user Rosa account. Unfortunately, we do not have access to view/read the file.
 
 ![webShell](Images/webShell.png)
 
 
 ## User Flag
 
-From here we can look through the machine for more potential information on the user Rosa.
+From here, we can look through the machine for more potential information on the user Rosa.
 Reading the app.py file we can see a reference to database.db
 ```
 $ cd app
@@ -116,7 +116,7 @@ $ cat app.py
 ```
 ![appPy](Images/appPy.png)
 
-We can read the database.db file using sqlite command. From this we can see multiple users and their password hashes. We are intested in Rosa and her password hash.
+Read the database.db file using the sqlite3 command. From this, we can see multiple users and their password hashes. We are interested in Rosa and her password hash.
 ```
 $ ls
 app.py
@@ -134,7 +134,7 @@ $ sqlite3 database.db .dump
 ![databaseDb2](Images/databaseDb2.png)
 
 We can either try to crack the password hash locally using a tool such as JohnTheRipper.
-Alternatively, I have used the site crackstation.net, which will check and see if they have the password for the provided password hash.
+Alternatively, I have used the site crackstation.net which will check and see if they have the password for the provided password hash.
 
 ![crackStation](Images/crackStation.png)
 
