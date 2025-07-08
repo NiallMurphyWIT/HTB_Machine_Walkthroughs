@@ -39,6 +39,14 @@ ffuf -w subdomains.txt -u http://alert.htb -H "Host:FUZZ.alert.htb" -ac
 ```
 ![ffuf](Images/ffuf.png)
 
+This returns a hit for statistics. Add statistics.alert.htb to our etc/hosts file.
+Browsing to this page and we will see that a login is required. I tried default admin credentials here and was unsuccessful logging in.
+
+![statistics](Images/statistics.png)
+
+
+
+
 
 
 ## Root
